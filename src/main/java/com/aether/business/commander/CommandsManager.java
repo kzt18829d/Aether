@@ -106,19 +106,26 @@ public class CommandsManager {
                         break;
 
                     case "add":
-                        // TODO Инкапсулировать действия в отдельные классы для разгрузки кода класса
 
                         String addSubCommand = jCommander.getCommands().get("add").getParsedCommand();
                         if ("device".equals(addSubCommand)) {
-                            List<String> parameters = commandAddDevice.getDeviceParameters();
+                            try {
+                                List<String> parameters = commandAddDevice.getDeviceParameters();
 
-                            Device newDevice = ObjectsFactory.createDevice(parameters.getFirst(), parameters.get(1), parameters.getLast());
-                            smartHomeController.addDevice(newDevice);
+                                Device newDevice = ObjectsFactory.createDevice(parameters.getFirst(), parameters.get(1), parameters.getLast());
+                                smartHomeController.addDevice(newDevice);
+                            } finally {
+                                commandAddDevice.clearCommand();
+                            }
 
                         }
                         else if ("location".equals(addSubCommand)) {
-                            var locationTemplate = commandAddLocation.getLocationName();
-                            smartHomeController.addLocation(new Location(locationTemplate));
+                            try {
+                                var locationTemplate = commandAddLocation.getLocationName();
+                                smartHomeController.addLocation(new Location(locationTemplate));
+                            } finally {
+                                commandAddLocation.clearCommand();
+                            }
 
                         } else {
                             if (addSubCommand.isEmpty() || addSubCommand == null) throw new InvalidCommandException("Empty subCommand");
@@ -133,7 +140,11 @@ public class CommandsManager {
                             System.out.println(smartHomeController.getSystemStatusReport_ByString());
                         }
                         else if ("device".equals(statusSubCommand)) {
-                            System.out.println(smartHomeController.getDeviceStatusReport_ByString(UUID.fromString(commandStatusDevice.getUuid())));
+                            try {
+                                System.out.println(smartHomeController.getDeviceStatusReport_ByString(UUID.fromString(commandStatusDevice.getUuid())));
+                            } finally {
+                                commandStatusDevice.clearCommand();
+                            }
                         }
                         else {
                             throw new SmartHomeControllerException("Invalid or empty command's argument");
@@ -158,11 +169,9 @@ public class CommandsManager {
                 System.out.println(cmdlERR + "Other Error: " + exception.getMessage());
             }
             finally {
-                // только те, у которых это нужно
-                commandAddDevice.clearCommand();
-                commandAddLocation.clearCommand();
-                commandStatusDevice.clearCommand();
+
             }
+
             if (!cycleController) return;
         }
     }
