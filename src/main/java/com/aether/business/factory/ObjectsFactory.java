@@ -2,7 +2,7 @@ package com.aether.business.factory;
 
 import com.aether.business.Exceptions.CreateDeviceException;
 import com.aether.business.devices.*;
-import com.aether.business.devices.SubTypes.*;
+import com.aether.business.types.*;
 
 public class ObjectsFactory {
 

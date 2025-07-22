@@ -1,5 +1,6 @@
-package com.aether.business.commands;
+package com.aether.business.commander.commands.Add;
 
+import com.aether.business.commander.ICommand;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
@@ -7,7 +8,7 @@ import com.beust.jcommander.Parameters;
         commandNames = "location",
         commandDescription = "Add new location"
 )
-public class CommandAddLocation {
+public class CommandAddLocation extends ICommand {
     @Parameter(
             required = true,
             description = "<LocationName>"
@@ -16,5 +17,10 @@ public class CommandAddLocation {
 
     public String getLocationName() {
         return locationName;
+    }
+
+    @Override
+    public void clearCommand() {
+        locationName = null;
     }
 }

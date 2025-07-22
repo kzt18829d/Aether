@@ -1,8 +1,8 @@
 package com.aether.business.devices;
 
-import com.aether.business.devices.SubTypes.Location;
-import com.aether.business.devices.SubTypes.Name;
-import com.aether.business.devices.SubTypes.Temperature;
+import com.aether.business.types.Location;
+import com.aether.business.types.Name;
+import com.aether.business.types.Temperature;
 
 public class Thermostat extends Device {
     private final Temperature temperature;
@@ -27,5 +27,10 @@ public class Thermostat extends Device {
 
     public void setTemperature(Integer temperature) {
         this.temperature.setTemperature(temperature);
+    }
+
+    @Override
+    public String getType() {
+        return "Thermostat";
     }
 }

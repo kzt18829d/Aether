@@ -1,8 +1,8 @@
 package com.aether.devices;
 
 import com.aether.business.devices.Device;
-import com.aether.business.devices.SubTypes.Name;
-import com.aether.business.devices.SubTypes.Location;
+import com.aether.business.types.Name;
+import com.aether.business.types.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

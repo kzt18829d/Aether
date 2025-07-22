@@ -1,4 +1,4 @@
-package com.aether.business.commands;
+package com.aether.business.commander.commands;
 
 import com.beust.jcommander.Parameters;
 

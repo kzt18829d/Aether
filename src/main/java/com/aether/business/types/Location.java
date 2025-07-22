@@ -1,4 +1,4 @@
-package com.aether.business.devices.SubTypes;
+package com.aether.business.types;
 
 import java.util.Objects;
 import com.aether.business.Exceptions.InvalidLocationNameException;
@@ -11,7 +11,7 @@ public class Location {
         this.location = location;
     }
 
-    public String getLocation() {
+    public String get() {
         return location;
     }
 
@@ -25,5 +25,12 @@ public class Location {
     @Override
     public int hashCode() {
         return Objects.hashCode(location);
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "location='" + location + '\'' +
+                '}';
     }
 }

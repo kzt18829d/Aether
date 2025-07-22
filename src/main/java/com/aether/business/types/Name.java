@@ -1,4 +1,4 @@
-package com.aether.business.devices.SubTypes;
+package com.aether.business.types;
 
 import com.aether.business.Exceptions.InvalidDeviceNameException;
 
@@ -35,5 +35,12 @@ public class Name {
     @Override
     public int hashCode() {
         return Objects.hashCode(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Name{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

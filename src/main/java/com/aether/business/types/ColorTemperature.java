@@ -1,4 +1,4 @@
-package com.aether.business.devices.SubTypes;
+package com.aether.business.types;
 
 import com.aether.business.Exceptions.InvalidColorTemperatureException;
 

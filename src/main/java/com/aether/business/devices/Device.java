@@ -2,8 +2,10 @@ package com.aether.business.devices;
 
 import java.util.Objects;
 import java.util.UUID;
-import com.aether.business.devices.SubTypes.Location;
-import com.aether.business.devices.SubTypes.Name;
+
+import com.aether.business.Exceptions.DeviceException;
+import com.aether.business.types.Location;
+import com.aether.business.types.Name;
 import com.aether.business.enums.Status;
 
 /**
@@ -29,11 +31,13 @@ public abstract class Device {
         this.uuid = UUID.randomUUID();
         this.deviceName = deviceName;
         this.location = location;
+        status = Status.ONLINE;
     }
 
 
     /// Функция включения устройства
     public final boolean turnOn() {
+        if (location == null) return false;
         try {
             status = Status.ONLINE;
         } catch (Exception e) {
@@ -69,7 +73,16 @@ public abstract class Device {
     }
 
     public final String getLocationString() {
-        return location.getLocation();
+        return location.get();
+    }
+
+    public void removeLocation() {
+        this.location = null;
+    }
+
+    public void setLocation(Location location) {
+        if (this.location != null) throw new DeviceException("Устройство уже привязано к локации");
+        this.location = location;
     }
 
     public final UUID getUuid() {
@@ -81,6 +94,10 @@ public abstract class Device {
     public boolean relocate(Location other) {
         location = other;
         return true;
+    }
+
+    public String getType() {
+        return "Device";
     }
 
     @Override

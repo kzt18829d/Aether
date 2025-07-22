@@ -1,7 +1,7 @@
 package com.aether.business.filemanagement;
 
 import com.aether.business.devices.Device;
-import com.aether.business.devices.SubTypes.Location;
+import com.aether.business.types.Location;
 
 import java.util.Map;
 import java.util.UUID;

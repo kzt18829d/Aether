@@ -1,7 +1,7 @@
 package com.aether.business.devices;
 
-import com.aether.business.devices.SubTypes.Location;
-import com.aether.business.devices.SubTypes.Name;
+import com.aether.business.types.Location;
+import com.aether.business.types.Name;
 import com.aether.business.enums.Status;
 
 public class SmartLock extends Device {
@@ -26,5 +26,10 @@ public class SmartLock extends Device {
         if (status != Status.ONLINE) return false;
         this.isLocked = false;
         return true;
+    }
+
+    @Override
+    public String getType() {
+        return "SmartLock";
     }
 }

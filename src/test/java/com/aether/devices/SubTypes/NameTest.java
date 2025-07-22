@@ -1,7 +1,7 @@
 package com.aether.devices.SubTypes;
 
 import com.aether.business.Exceptions.InvalidDeviceNameException;
-import com.aether.business.devices.SubTypes.Name;
+import com.aether.business.types.Name;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,5 +1,6 @@
-package com.aether.business.commands;
+package com.aether.business.commander.commands.Status;
 
+import com.aether.business.commander.ICommand;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
@@ -7,7 +8,7 @@ import com.beust.jcommander.Parameters;
         commandNames = {"device"},
         commandDescription = "Get device's status"
 )
-public class CommandStatusDevice {
+public class CommandStatusDevice extends ICommand {
     @Parameter (
             description = "<Device UUID>"
     )
@@ -15,5 +16,10 @@ public class CommandStatusDevice {
 
     public String getUuid() {
         return uuid;
+    }
+
+    @Override
+    public void clearCommand() {
+        this.uuid = null;
     }
 }

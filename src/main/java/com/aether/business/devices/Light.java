@@ -1,8 +1,8 @@
 package com.aether.business.devices;
-import com.aether.business.devices.SubTypes.Brightness;
-import com.aether.business.devices.SubTypes.ColorTemperature;
-import com.aether.business.devices.SubTypes.Location;
-import com.aether.business.devices.SubTypes.Name;
+import com.aether.business.types.Brightness;
+import com.aether.business.types.ColorTemperature;
+import com.aether.business.types.Location;
+import com.aether.business.types.Name;
 
 /**
  * Класс элементов освещения
@@ -41,5 +41,10 @@ public class Light extends Device {
 
     public void setColorTemperature(Integer colorTemperature) {
         this.colorTemperature.setTemperature(colorTemperature);
+    }
+
+    @Override
+    public String getType() {
+        return "Light";
     }
 }

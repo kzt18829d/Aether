@@ -1,19 +1,24 @@
-package com.aether.business.commands;
+package com.aether.business.commander;
 
-import com.aether.business.Exceptions.CreateDeviceException;
-import com.aether.business.Exceptions.InvalidCommandException;
-import com.aether.business.Exceptions.InvalidDeviceNameException;
-import com.aether.business.Exceptions.InvalidLocationNameException;
+import com.aether.business.Exceptions.*;
+import com.aether.business.commander.commands.*;
+import com.aether.business.commander.commands.Add.CommandAdd;
+import com.aether.business.commander.commands.Add.CommandAddDevice;
+import com.aether.business.commander.commands.Add.CommandAddLocation;
+import com.aether.business.commander.commands.Status.CommandStatus;
+import com.aether.business.commander.commands.Status.CommandStatusAll;
+import com.aether.business.commander.commands.Status.CommandStatusDevice;
+import com.aether.business.constaints.Terminal;
 import com.aether.business.core.SmartHomeController;
 import com.aether.business.devices.Device;
-import com.aether.business.devices.SubTypes.Location;
-import com.aether.business.devices.SubTypes.Name;
 import com.aether.business.factory.ObjectsFactory;
+import com.aether.business.types.Location;
 import com.beust.jcommander.JCommander;
 
 import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class CommandsManager {
     private final String own;
@@ -103,55 +108,61 @@ public class CommandsManager {
                     case "add":
                         // TODO Инкапсулировать действия в отдельные классы для разгрузки кода класса
 
-                        String subCommand = jCommander.getCommands().get("add").getParsedCommand();
-                        if ("device".equals(subCommand)) {
+                        String addSubCommand = jCommander.getCommands().get("add").getParsedCommand();
+                        if ("device".equals(addSubCommand)) {
                             List<String> parameters = commandAddDevice.getDeviceParameters();
 
-                            System.out.println(cmdlINFO + "Adding Device " + parameters.get(1) + " --Location \"" + parameters.getLast());
                             Device newDevice = ObjectsFactory.createDevice(parameters.getFirst(), parameters.get(1), parameters.getLast());
-
-                            if (smartHomeController.getLocation(newDevice.getLocationString()) == null) {
-                                smartHomeController.addLocation(newDevice.getLocation());
-                                System.out.println(cmdlINFO + "Added Location \"" + newDevice.getLocationString() + "\"");
-                            }
-
                             smartHomeController.addDevice(newDevice);
-                            System.out.println(cmdlINFO + "Created Device " + newDevice.getDeviceNameString() + " in " + newDevice.getLocationString() + " with UUID " + newDevice.getUuid());
-                        }
-                        else if ("location".equals(subCommand)) {
-                            System.out.println(cmdlINFO + "Adding Location " + commandAddLocation.getLocationName());
 
-                            // TODO написать добавление локации. Инкапсулировать в отдельный класс
+                        }
+                        else if ("location".equals(addSubCommand)) {
+                            var locationTemplate = commandAddLocation.getLocationName();
+                            smartHomeController.addLocation(new Location(locationTemplate));
 
                         } else {
-                            if (subCommand.isEmpty() || subCommand == null) throw new InvalidCommandException("Empty subCommand");
-                            else throw new InvalidCommandException("Invalid subCommand " + subCommand);
+                            if (addSubCommand.isEmpty() || addSubCommand == null) throw new InvalidCommandException("Empty subCommand");
+                            else throw new InvalidCommandException("Invalid subCommand " + addSubCommand);
                         }
                         break;
 
                     case "status":
                     case "Status":
+                        String statusSubCommand = jCommander.getCommands().get("status").getParsedCommand();
+                        if ("all".equals(statusSubCommand)) {
+                            System.out.println(smartHomeController.getSystemStatusReport_ByString());
+                        }
+                        else if ("device".equals(statusSubCommand)) {
+                            System.out.println(smartHomeController.getDeviceStatusReport_ByString(UUID.fromString(commandStatusDevice.getUuid())));
+                        }
+                        else {
+                            throw new SmartHomeControllerException("Invalid or empty command's argument");
+                        }
                         break;
                     default:
                         throw new ParseException("Invalid command \"" + writtenCommand, 0);
                 }
             } catch (CreateDeviceException exception) {
-                System.out.println(cmdlERR + "Device wasn't created. " + exception.toString());
+                System.out.println(cmdlERR + "Device wasn't created. " + exception.getMessage());
             }
             catch (InvalidDeviceNameException exception){
-                System.out.println(cmdlERR + "Invalid name of Device. " + exception.toString());
+                System.out.println(cmdlERR + "Invalid name of Device. " + exception.getMessage());
             }
             catch (InvalidLocationNameException exception) {
-                System.out.println(cmdlERR + "Invalid Location name. " + exception.toString());
+                System.out.println(cmdlERR + "Invalid Location name. " + exception.getMessage());
             }
-            catch (InvalidCommandException exception) {
-                System.out.println("Invalid command. " + exception.toString());
+            catch (InvalidCommandException | ParseException exception) {
+                System.out.println("Invalid command. " + exception.getMessage());
             }
             catch (Exception exception) {
                 System.out.println(cmdlERR + "Other Error: " + exception.getMessage());
             }
-
-            // TODO Сделать очистку аргументов команд в конце цикла
+            finally {
+                // только те, у которых это нужно
+                commandAddDevice.clearCommand();
+                commandAddLocation.clearCommand();
+                commandStatusDevice.clearCommand();
+            }
             if (!cycleController) return;
         }
     }

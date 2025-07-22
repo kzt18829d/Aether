@@ -1,7 +1,7 @@
 package com.aether.business.devices;
 
-import com.aether.business.devices.SubTypes.Location;
-import com.aether.business.devices.SubTypes.Name;
+import com.aether.business.types.Location;
+import com.aether.business.types.Name;
 import com.aether.business.enums.Status;
 
 public class SecurityCamera extends Device {
@@ -38,4 +38,8 @@ public class SecurityCamera extends Device {
         return true;
     }
 
+    @Override
+    public String getType() {
+        return "SecurityCamera";
+    }
 }

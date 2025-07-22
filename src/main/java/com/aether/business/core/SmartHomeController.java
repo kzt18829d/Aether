@@ -1,64 +1,178 @@
 package com.aether.business.core;
 
+import com.aether.business.Exceptions.SmartHomeControllerException;
+import com.aether.business.constaints.Terminal;
 import com.aether.business.devices.Device;
-import com.aether.business.devices.SubTypes.Location;
-import com.johncsinclair.consoletable.*;
+import com.aether.business.types.Location;
+import com.johncsinclair.consoletable.ColumnFormat;
+import com.johncsinclair.consoletable.ConsoleTable;
 
 import java.util.*;
 
+/**
+ * Основной класс.
+ * Управляет устройствами и локациями умного дома.
+ */
 public class SmartHomeController {
+    /**
+     * Карта устройств
+     * @see Device
+     */
     private final Map<UUID, Device> deviceMap;
-    private final Map<String, Location> locationsMap;
+
+    /**
+     * Карта локаций
+     * @see Location
+     */
+    private final Map<String, Location> locationMap;
 
     public SmartHomeController() {
         this.deviceMap = new HashMap<UUID, Device>();
-        this.locationsMap = new HashMap<String, Location>();
+        this.locationMap = new HashMap<String, Location>();
     }
 
-    public boolean addDevice(Device device) {
-        if (deviceMap.containsKey(device.getUuid())) return false;
-        deviceMap.putIfAbsent(device.getUuid(), device);
-        return true;
+    /**
+     * Запросить устройство по его UUID
+     * @param uuid
+     * @return Искомый Device || null
+     * @see Device
+     */
+    public Device getDeviceByID(UUID uuid) { return deviceMap.get(uuid); }
+
+    /**
+     * Запросить все устройства
+     * @return ArrayList устройств
+     * @see Device
+     */
+    public List<Device> getAllDevices() { return new ArrayList<Device>(deviceMap.values()); }
+
+    /**
+     * Запросить локацию по имени
+     * @param location_name
+     * @return Искомая Location
+     * @see Location
+     */
+    public Location getLocation(String location_name) { return locationMap.get(location_name); }
+
+    /**
+     * Запрос всех локаций
+     * @return ArrayList локаций
+     * @see Location
+     */
+    public List<Location> getAllLocations() { return new ArrayList<Location>(locationMap.values()); }
+
+    /**
+     * Добавить новую локацию
+     * @param location
+     * @see Location
+     */
+    public void addLocation(Location location) {
+        if (locationMap.containsKey(location.get())) throw new SmartHomeControllerException("Эта локация уже существует.");
+        locationMap.putIfAbsent(location.get(), location);
+        Terminal.info("Location \"" + location.get() + "\" added.");
     }
 
-    public boolean removeDevice(UUID uuid) {
-        if (!deviceMap.containsKey(uuid)) return false;
+    /**
+     * Удалить существующую локацию
+     * @param location_name
+     */
+    public void removeLocation(String location_name) {
+        if (!locationMap.containsKey(location_name)) throw new SmartHomeControllerException("Локация не найдена.");
+        locationMap.remove(location_name);
+        var devices = getAllDevices();
+        List<Device> contains = new ArrayList<Device>();
+
+        for (Device device : devices) {
+            if (Objects.equals(device.getLocationString(), location_name)) {
+                contains.add(device);
+            }
+        }
+        if (contains.isEmpty()) locationMap.remove(location_name);
+        else {
+            for (Device device : contains) {
+                device.turnOff();
+//                System.out.println(Terminal.INFO + "Device " + device.getUuid() + " is turned off");
+                Terminal.warn("Device " + device.getUuid() + " is turned off");
+                device.removeLocation();
+                Terminal.warn("Device's " + device.getUuid() + " location was removed. Device cannot being turned on, need to relocate");
+            }
+        }
+
+        Terminal.info("Location \"" + location_name + "\" was deleted.");
+    }
+
+    /**
+     * Удалить существующую локацию
+     * @param location
+     * @see Location
+     */
+    public void removeLocation(Location location) {
+        removeLocation(location.get());
+    }
+
+    /**
+     * Проверка наличия локации в locationMap
+     * @param location
+     * @return boolean
+     */
+    public boolean findLocation_b(Location location) {
+        return locationMap.containsValue(location);
+    }
+
+    /**
+     * Проверка наличия локации в locationMap
+     * @param location_name
+     * @return boolean
+     */
+    public boolean findLocation_b(String location_name) {
+        return locationMap.containsKey(location_name);
+    }
+
+    /**
+     * Добавление нового устройства
+     * @param device
+     */
+    public void addDevice(Device device) {
+        final var uuid = device.getUuid();
+        if (deviceMap.containsKey(uuid)) throw new SmartHomeControllerException("Устройство уже существует и не может быть добавлено");
+        try {
+            if (!findLocation_b(device.getLocation())) {
+                addLocation(device.getLocation());
+            }
+            deviceMap.putIfAbsent(uuid, device);
+            Terminal.info("Device " + uuid + " \"" + device.getDeviceNameString() + "\" created");
+        }
+        catch (Exception exception) {
+            Terminal.error(exception.getMessage());
+        }
+    }
+
+    public void removeDevice(UUID uuid) {
+        if (!deviceMap.containsKey(uuid)) throw new SmartHomeControllerException("Device " + uuid.toString() + "wasn't find");
         deviceMap.remove(uuid);
-        return true;
+        Terminal.info("Device " + uuid + " is deleted");
     }
 
-    public Device getDeviceByID(UUID uuid) {
-        return deviceMap.get(uuid);
-    }
+    public String getDeviceStatusReport_ByString(UUID uuid) {
+        Device device = getDeviceByID(uuid);
+        if (device == null) {
+            throw new SmartHomeControllerException("Device " + uuid.toString() + " wasn't find");
+        }
 
-    public ArrayList<Device> getAllDevices() {
-        return new ArrayList<Device>(deviceMap.values());
-    }
+        ConsoleTable SystemStatusReportTable = new ConsoleTable();
+        String Header1 = "Device UUID";
+        String Header2 = "Device name";
+        String Header3 = "Device Location";
+        String Header4 = "Device Status";
+        SystemStatusReportTable.setHeaders(Header1, Header2, Header3, Header4).withAlignment(ColumnFormat.Aligned.CENTRE);
 
-    public boolean addLocation(Location location) {
-        if (locationsMap.containsKey(location.getLocation())) return false;
-        locationsMap.putIfAbsent(location.getLocation(), location);
-        return true;
-    }
-
-    public boolean removeLocation(Location location) {
-        if (!locationsMap.containsKey(location.getLocation())) return false;
-        locationsMap.remove(location.getLocation());
-        return true;
-    }
-
-    public boolean removeLocation(String name) {
-        if (!locationsMap.containsKey(name)) return false;
-        locationsMap.remove(name);
-        return true;
-    }
-
-    public Location getLocation(String name) {
-        return locationsMap.get(name);
-    }
-
-    public ArrayList<Location> getLocationsList() {
-        return new ArrayList<Location>(locationsMap.values());
+        SystemStatusReportTable.addRow(
+                device.getUuid(),
+                device.getDeviceNameString(),
+                device.getLocationString(),
+                device.getStatus().toString()
+        );
+        return SystemStatusReportTable.toString();
     }
 
     public String getSystemStatusReport_ByString() {
@@ -75,11 +189,10 @@ public class SmartHomeController {
                     entry.getKey(),
                     value.getDeviceNameString(),
                     value.getLocationString(),
-                    value.getStatus()
-                    );
+                    value.getStatus().toString()
+            );
         }
 
         return SystemStatusReportTable.toString();
-
     }
 }
