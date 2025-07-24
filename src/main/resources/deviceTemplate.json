@@ -1,0 +1,34 @@
+{
+  "UUID1" : {
+    "DeviceType" : "Light",
+    "DeviceName" : "Name",
+    "DeviceLocation" : "Location",
+    "DeviceStatus" : "Status",
+    "DeviceBrightness" : "int",
+    "DeviceColorTemperature" : "int"
+  },
+
+  "UUID2" : {
+    "DeviceType" : "SecurityCamera",
+    "DeviceName" : "Name",
+    "DeviceLocation" : "Location",
+    "DeviceStatus" : "Status",
+    "DeviceNightVision" : "boolean"
+  },
+
+  "UUID3" : {
+    "DeviceType" : "SmartLock",
+    "DeviceName" : "Name",
+    "DeviceLocation" : "Location",
+    "DeviceStatus" : "Status",
+    "DeviceIsLocked" : "boolean"
+  },
+
+  "UUID4" : {
+    "DeviceType" : "Thermostat",
+    "DeviceName" : "Name",
+    "DeviceLocation" : "Location",
+    "DeviceStatus" : "Status",
+    "DeviceTemperature" : "byte/int"
+  }
+}
