@@ -12,6 +12,9 @@ import com.aether.business.commander.commands.Remove.CommandRemoveLocation;
 import com.aether.business.commander.commands.Status.CommandStatus;
 import com.aether.business.commander.commands.Status.CommandStatusAll;
 import com.aether.business.commander.commands.Status.CommandStatusDevice;
+import com.aether.business.commander.commands.managers.DeviceManager;
+import com.aether.business.commander.commands.managers.LocationManager;
+import com.aether.business.commander.commands.managers.StatusManager;
 import com.aether.business.constaints.Terminal;
 import com.aether.business.core.SmartHomeController;
 import com.aether.business.devices.Device;
@@ -103,9 +106,9 @@ public class CommandsManager {
                         if ("device".equals(addSubCommand)) {
                             String deviceHelpSubCommand = jCommander.getCommands().get("add").getCommands().get("device").getParsedCommand();
                             if ("help".equals(deviceHelpSubCommand)) Terminal.info(commandAddDeviceHelp.help_s());
-                            addDevice(smartHomeController);
+                            DeviceManager.addDevice(smartHomeController, commandAddDevice, commandAddDeviceHelp);
                         }
-                        else if ("location".equals(addSubCommand)) addLocation(smartHomeController);
+                        else if ("location".equals(addSubCommand)) LocationManager.addLocation(smartHomeController, commandAddLocation);
                         else {
                             if (addSubCommand.isEmpty() || addSubCommand == null) throw new InvalidCommandException("Empty subCommand");
                             else throw new InvalidCommandException("Invalid subCommand " + addSubCommand);
@@ -114,8 +117,8 @@ public class CommandsManager {
                     case "status":
                     case "Status":
                         String statusSubCommand = jCommander.getCommands().get("status").getParsedCommand();
-                        if ("all".equals(statusSubCommand)) getStatusAll(smartHomeController);
-                        else if ("device".equals(statusSubCommand)) getStatusDevice(smartHomeController);
+                        if ("all".equals(statusSubCommand)) StatusManager.getStatusAll(smartHomeController);
+                        else if ("device".equals(statusSubCommand)) StatusManager.getStatusDevice(smartHomeController, commandStatusDevice);
                         else {
                             throw new SmartHomeControllerException("Invalid or empty command's argument");
                         }
@@ -124,10 +127,10 @@ public class CommandsManager {
                     case "Remove":
                         String removeCommand = jCommander.getCommands().get("remove").getParsedCommand();
                         if ("deivce".equals(removeCommand)) {
-                            removeDevice(smartHomeController, commandRemoveDevice.getUuid());
+                            DeviceManager.removeDevice(smartHomeController, commandRemoveDevice.getUuid(), commandRemoveDevice);
                         }
                         else if ("location".equals(removeCommand)) {
-                            removeLocation(smartHomeController, commandRemoveLocation.getLocationName());
+                            LocationManager.removeLocation(smartHomeController, commandRemoveLocation.getLocationName(), commandRemoveLocation);
                         }
                         else {
                             throw new InvalidCommandException("Invalid command");
@@ -194,67 +197,4 @@ public class CommandsManager {
         Terminal.info("\"Loading Data from \"XXXX\"...");
     }
 
-    private void addDevice(SmartHomeController controller) {
-        try {
-            List<String> parameters = commandAddDevice.getDeviceParameters();
-            if (parameters.isEmpty() ) {
-                Terminal.info(commandAddDeviceHelp.help_s());
-                return;
-            }
-
-            Device newDevice = ObjectsFactory.createDevice(parameters.getFirst(), parameters.get(1), parameters.getLast());
-            controller.addDevice(newDevice);
-        } finally {
-            commandAddDevice.clearCommand();
-        }
-    }
-
-    public void deviceHelp() {
-        Terminal.info(commandAddDeviceHelp.help_s());
-    }
-
-    private void addLocation(SmartHomeController controller) {
-        try {
-            var locationTemplate = commandAddLocation.getLocationName();
-            controller.addLocation(new Location(locationTemplate));
-        } finally {
-            commandAddLocation.clearCommand();
-        }
-    }
-
-    private void getStatusAll(SmartHomeController smartHomeController) {
-        System.out.println(smartHomeController.getSystemStatusReport_ByString());
-    }
-
-    private void getStatusDevice(SmartHomeController smartHomeController) {
-        try {
-            System.out.println(smartHomeController.getDeviceStatusReport_ByString(UUID.fromString(commandStatusDevice.getUuid())));
-        } finally {
-            commandStatusDevice.clearCommand();
-        }
-    }
-
-    private void removeDevice(SmartHomeController smartHomeController, String uuid_s) {
-        try {
-            UUID uuid = UUID.fromString(uuid_s);
-            smartHomeController.removeDevice(uuid);
-
-        } catch (SmartHomeControllerException exception) {
-            Terminal.error("Device " + uuid_s + " wasn't deleted. " + exception.getMessage());
-        }
-        catch (RuntimeException exception) {
-            Terminal.error(exception.getMessage());
-        } finally {
-            commandRemoveDevice.clearCommand();
-        }
-    }
-
-    public void removeLocation(SmartHomeController smartHomeController, String loc_name) {
-        try {
-            if (!smartHomeController.findLocation_b(loc_name)) throw new SmartHomeControllerException("Location " + loc_name + " wasn't find.");
-            smartHomeController.removeLocation(loc_name);
-        } finally {
-            commandRemoveLocation.clearCommand();
-        }
-    }
 }
