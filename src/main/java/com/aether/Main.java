@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
 
         CommandsManager cmdManager = new CommandsManager(main_);
-        cmdManager.Commander(smartHomeController);
+        cmdManager.Commander(smartHomeController, main_);
 
     }
 
