@@ -14,7 +14,7 @@ import com.beust.jcommander.Parameters;
 public class CommandAddDevice extends ICommand {
     @Parameter(
             arity = 3,
-            required = true,
+//            required = true,
             description = "<deviceType> <deviceName> <deviceLocation>"
     )
     private List<String> deviceParameters;

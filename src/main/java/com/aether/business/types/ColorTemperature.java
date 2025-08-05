@@ -2,6 +2,8 @@ package com.aether.business.types;
 
 import com.aether.business.Exceptions.InvalidColorTemperatureException;
 
+import java.util.Objects;
+
 public class ColorTemperature {
     private Integer temperature;
     public static final int MIN = 2700;
@@ -17,9 +19,8 @@ public class ColorTemperature {
         return temperature;
     }
 
-    public boolean setTemperature(Integer temperature) {
+    public void setTemperature(Integer temperature) {
         this.temperature = validTemperature(temperature);
-        return true;
     }
 
     public Integer getColorTemperature() {
@@ -34,4 +35,16 @@ public class ColorTemperature {
         return MIN;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ColorTemperature that = (ColorTemperature) o;
+        return Objects.equals(temperature, that.temperature);
+    }
+
+    @Override
+    public int hashCode() {
+        return 27 * Objects.hashCode(temperature);
+    }
 }

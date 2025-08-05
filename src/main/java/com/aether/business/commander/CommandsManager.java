@@ -4,7 +4,6 @@ import com.aether.business.Exceptions.*;
 import com.aether.business.commander.commands.*;
 import com.aether.business.commander.commands.Add.CommandAdd;
 import com.aether.business.commander.commands.Add.CommandAddDevice;
-import com.aether.business.commander.commands.Add.CommandAddDeviceHelp;
 import com.aether.business.commander.commands.Add.CommandAddLocation;
 import com.aether.business.commander.commands.Remove.CommandRemove;
 import com.aether.business.commander.commands.Remove.CommandRemoveDevice;
@@ -17,15 +16,10 @@ import com.aether.business.commander.commands.managers.LocationManager;
 import com.aether.business.commander.commands.managers.StatusManager;
 import com.aether.business.constaints.Terminal;
 import com.aether.business.core.SmartHomeController;
-import com.aether.business.devices.Device;
-import com.aether.business.factory.ObjectsFactory;
-import com.aether.business.types.Location;
 import com.beust.jcommander.JCommander;
 
 import java.text.ParseException;
-import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
 
 public class CommandsManager {
     private final String cmdl;
@@ -39,7 +33,6 @@ public class CommandsManager {
 
     private final CommandAdd commandAdd;
     private final CommandAddDevice commandAddDevice;
-    private final CommandAddDeviceHelp commandAddDeviceHelp;
     private final CommandAddLocation commandAddLocation;
 
     private final CommandStatus commandStatus;
@@ -63,7 +56,6 @@ public class CommandsManager {
 
         commandAdd = new CommandAdd();
         commandAddDevice = new CommandAddDevice();
-        commandAddDeviceHelp = new CommandAddDeviceHelp();
         commandAddLocation = new CommandAddLocation();
 
         commandStatus = new CommandStatus();
@@ -105,8 +97,7 @@ public class CommandsManager {
                         String addSubCommand = jCommander.getCommands().get("add").getParsedCommand();
                         if ("device".equals(addSubCommand)) {
                             String deviceHelpSubCommand = jCommander.getCommands().get("add").getCommands().get("device").getParsedCommand();
-                            if ("help".equals(deviceHelpSubCommand)) Terminal.info(commandAddDeviceHelp.help_s());
-                            DeviceManager.addDevice(smartHomeController, commandAddDevice, commandAddDeviceHelp);
+                            DeviceManager.addDevice(smartHomeController, commandAddDevice);
                         }
                         else if ("location".equals(addSubCommand)) LocationManager.addLocation(smartHomeController, commandAddLocation);
                         else {
@@ -126,7 +117,7 @@ public class CommandsManager {
                     case "remove":
                     case "Remove":
                         String removeCommand = jCommander.getCommands().get("remove").getParsedCommand();
-                        if ("deivce".equals(removeCommand)) {
+                        if ("device".equals(removeCommand)) {
                             DeviceManager.removeDevice(smartHomeController, commandRemoveDevice.getUuid(), commandRemoveDevice);
                         }
                         else if ("location".equals(removeCommand)) {
@@ -151,7 +142,7 @@ public class CommandsManager {
                 Terminal.error("Invalid command. " + exception.getMessage());
             }
             catch (Exception exception) {
-                Terminal.error("Other Error: " + exception.getMessage());
+                Terminal.error("Other Error: " + exception.toString());
             }
 
             if (!cycleController) return;
@@ -169,7 +160,6 @@ public class CommandsManager {
                 .build();
 
         jCommander.getCommands().get("add").addCommand("device", commandAddDevice);
-        jCommander.getCommands().get("add").getCommands().get("device").addCommand("help", commandAddDeviceHelp);
         jCommander.getCommands().get("add").addCommand("location", commandAddLocation);
 
         jCommander.getCommands().get("status").addCommand("all", commandStatusAll);

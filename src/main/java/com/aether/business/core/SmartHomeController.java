@@ -26,6 +26,9 @@ public class SmartHomeController {
      */
     private final Map<String, Location> locationMap;
 
+    /**
+     * Конструктор по умолчанию
+     */
     public SmartHomeController() {
         this.deviceMap = new HashMap<UUID, Device>();
         this.locationMap = new HashMap<String, Location>();
@@ -107,7 +110,7 @@ public class SmartHomeController {
      * @see Location
      */
     public void removeLocation(Location location) {
-        removeLocation(location.get());
+        removeLocation(location.getString());
     }
 
     /**
@@ -133,26 +136,35 @@ public class SmartHomeController {
      * @param device
      */
     public void addDevice(Device device) {
-        final var uuid = device.getUuid();
+        final var uuid = device.getDeviceUUID();
         if (deviceMap.containsKey(uuid)) throw new SmartHomeControllerException("Устройство уже существует и не может быть добавлено");
         try {
-            if (!findLocation_b(device.getLocation())) {
-                addLocation(device.getLocation());
+            if (!findLocation_b(device.getDeviceLocation())) {
+                addLocation(device.getDeviceLocation());
             }
             deviceMap.putIfAbsent(uuid, device);
-            Terminal.info("Device " + uuid + " \"" + device.getDeviceNameString() + "\" created");
+            Terminal.info("Device " + uuid + " \"" + device.getDeviceName_string() + "\" created");
         }
         catch (Exception exception) {
             Terminal.error(exception.getMessage());
         }
     }
 
+    /**
+     * Удаление устройства
+     * @param uuid
+     */
     public void removeDevice(UUID uuid) {
         if (!deviceMap.containsKey(uuid)) throw new SmartHomeControllerException("Device " + uuid.toString() + "wasn't find");
         deviceMap.remove(uuid);
         Terminal.info("Device " + uuid + " is deleted");
     }
 
+    /**
+     * Запрос статуса устройства по UUID
+     * @param uuid
+     * @return String (Table)
+     */
     public String getDeviceStatusReport_ByString(UUID uuid) {
         Device device = getDeviceByID(uuid);
         if (device == null) {
@@ -167,14 +179,18 @@ public class SmartHomeController {
         SystemStatusReportTable.setHeaders(Header1, Header2, Header3, Header4).withAlignment(ColumnFormat.Aligned.CENTRE);
 
         SystemStatusReportTable.addRow(
-                device.getUuid(),
-                device.getDeviceNameString(),
-                device.getLocationString(),
-                device.getStatus().toString()
+                device.getDeviceUUID(),
+                device.getDeviceName_string(),
+                device.getDeviceLocation_string(),
+                device.getPowerStatus().toString()
         );
         return SystemStatusReportTable.toString();
     }
 
+    /**
+     * Запрос статуса всех устройств
+     * @return String (Table)
+     */
     public String getSystemStatusReport_ByString() {
         ConsoleTable SystemStatusReportTable = new ConsoleTable();
         String Header1 = "Device UUID";
@@ -187,9 +203,9 @@ public class SmartHomeController {
             var value = entry.getValue();
             SystemStatusReportTable.addRow(
                     entry.getKey(),
-                    value.getDeviceNameString(),
-                    value.getLocationString(),
-                    value.getStatus().toString()
+                    value.getDeviceName_string(),
+                    value.getDeviceLocation_string(),
+                    value.getPowerStatus().toString()
             );
         }
 

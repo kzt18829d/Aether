@@ -2,21 +2,34 @@ package com.aether.business.types;
 
 import java.util.Objects;
 import com.aether.business.Exceptions.InvalidLocationNameException;
+import com.aether.business.Exceptions.LocationException;
 
+/**
+ * Класс местоположения
+ */
 public class Location {
     private final String location;
 
+    /**
+     * Конструктор
+     * @param location
+     */
     public Location(String location) {
-        if (location.isEmpty()) throw new InvalidLocationNameException("Location has invalid name: \"" + location + "\".");
+        if (location.isEmpty()) throw new LocationException("Location has invalid name: \"" + location + "\".");
         this.location = location;
     }
 
-    public String get() {
+    /**
+     * Вернуть Location в формате String
+     * @return String
+     */
+    public String getString() {
         return location;
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Location location1 = (Location) o;
         return Objects.equals(location, location1.location);
@@ -24,7 +37,7 @@ public class Location {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(location);
+        return 27 * location.hashCode();
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.aether.business.commander.commands.managers;
 
 import com.aether.business.Exceptions.SmartHomeControllerException;
 import com.aether.business.commander.commands.Add.CommandAddDevice;
-import com.aether.business.commander.commands.Add.CommandAddDeviceHelp;
 import com.aether.business.commander.commands.Remove.CommandRemoveDevice;
 import com.aether.business.constaints.Terminal;
 import com.aether.business.core.SmartHomeController;
@@ -16,13 +15,9 @@ public class DeviceManager extends IManager {
 
     // TODO по нарастанию добавлять методы управления устройствами
 
-    public static void addDevice(SmartHomeController controller, CommandAddDevice commandAddDevice, CommandAddDeviceHelp commandAddDeviceHelp) {
+    public static void addDevice(SmartHomeController controller, CommandAddDevice commandAddDevice) {
         try {
             List<String> parameters = commandAddDevice.getDeviceParameters();
-            if (parameters.isEmpty() ) {
-                Terminal.info(commandAddDeviceHelp.help_s());
-                return;
-            }
 
             Device newDevice = ObjectsFactory.createDevice(parameters.getFirst(), parameters.get(1), parameters.getLast());
             controller.addDevice(newDevice);
