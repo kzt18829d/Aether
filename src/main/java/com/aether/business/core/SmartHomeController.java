@@ -70,9 +70,9 @@ public class SmartHomeController {
      * @see Location
      */
     public void addLocation(Location location) {
-        if (locationMap.containsKey(location.get())) throw new SmartHomeControllerException("Эта локация уже существует.");
-        locationMap.putIfAbsent(location.get(), location);
-        Terminal.info("Location \"" + location.get() + "\" added.");
+        if (locationMap.containsKey(location.getString())) throw new SmartHomeControllerException("Эта локация уже существует.");
+        locationMap.putIfAbsent(location.getString(), location);
+        Terminal.info("Location \"" + location.getString() + "\" added.");
     }
 
     /**
@@ -86,7 +86,7 @@ public class SmartHomeController {
         List<Device> contains = new ArrayList<Device>();
 
         for (Device device : devices) {
-            if (Objects.equals(device.getLocationString(), location_name)) {
+            if (Objects.equals(device.getDeviceLocation_string(), location_name)) {
                 contains.add(device);
             }
         }
@@ -95,9 +95,9 @@ public class SmartHomeController {
             for (Device device : contains) {
                 device.turnOff();
 //                System.out.println(Terminal.INFO + "Device " + device.getUuid() + " is turned off");
-                Terminal.warn("Device " + device.getUuid() + " is turned off");
-                device.removeLocation();
-                Terminal.warn("Device's " + device.getUuid() + " location was removed. Device cannot being turned on, need to relocate");
+                Terminal.warn("Device " + device.getDeviceUUID() + " is turned off");
+                device.removeDeviceLocation();
+                Terminal.warn("Device's " + device.getDeviceUUID() + " location was removed. Device cannot being turned on, need to relocate");
             }
         }
 

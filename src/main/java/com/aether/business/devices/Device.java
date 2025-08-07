@@ -6,7 +6,9 @@ import com.aether.business.devices.deviceInterfaces.TurnPower;
 import com.aether.business.enums.DeviceStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
+import com.fasterxml.jackson.annotation.*;
 
+import javax.xml.namespace.QName;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,6 +20,18 @@ import java.util.UUID;
  * @see TurnPower
  * @see Relocation
  */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "deviceType"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Light.class, name = "Light"),
+        @JsonSubTypes.Type(value = SecurityCamera.class, name = "SecurityCamera"),
+        @JsonSubTypes.Type(value = SmartLock.class, name = "SmartLock"),
+        @JsonSubTypes.Type(value = Thermostat.class, name = "Thermostat")
+}
+)
 public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
     /**
      * UUID устройства
@@ -32,20 +46,6 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
 
 
     /**
-     * Конструктор для преобразования из JSON/db
-     * @param deviceUUID
-     * @param deviceName
-     * @param deviceLocation
-     * @param deviceStatus
-     */
-    protected Device(String deviceUUID, String deviceName, String deviceLocation, String deviceStatus) {
-        this.deviceUUID = UUID.fromString(deviceUUID);
-        this.deviceName = new Name(deviceName);
-        this.deviceLocation = new Location(deviceLocation);
-        this.deviceStatus = DeviceStatus.fromString(deviceStatus);
-    }
-
-    /**
      * Основной конструктор
      * @param deviceName
      * @param deviceLocation
@@ -58,10 +58,30 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
     }
 
     /**
+     * Конструктор десериализации
+     * @param deviceUUID
+     * @param deviceName
+     * @param deviceLocation
+     * @param deviceStatus
+     */
+    @JsonCreator
+    protected Device(
+            @JsonProperty("deviceUUID")     UUID deviceUUID,
+            @JsonProperty("deviceName")     Name deviceName,
+            @JsonProperty("deviceLocation") Location deviceLocation,
+            @JsonProperty("deviceStatus")   DeviceStatus deviceStatus) {
+        this.deviceUUID = deviceUUID;
+        this.deviceName = deviceName;
+        this.deviceLocation = deviceLocation;
+        this.deviceStatus = deviceStatus;
+    }
+
+    /**
      * Device name getter
      * @return Name
      */
     public final Name getDeviceName() { return deviceName; }
+//    public final String getDeviceName() { return deviceName.getString(); }
 
     /**
      * Device location getter
@@ -79,13 +99,18 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
      * Device location getter (to String)
      * @return String
      */
+    @JsonGetter("deviceLocation")
     public final String getDeviceLocation_string() { return deviceLocation.getString(); }
 
     /**
      * Device name getter (to String)
      * @return String
      */
+    @JsonGetter("deviceName")
     public final String getDeviceName_string() { return deviceName.getString(); }
+
+    @JsonGetter("deviceUUID")
+    public final String getDeviceUUID_string() { return deviceUUID.toString(); }
 
     /**
      * Device location setter
@@ -94,6 +119,13 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
     public void setDeviceLocation(Location deviceLocation) {
         if (this.deviceLocation != null) throw new DeviceException("The device is already linked to the location");
         this.deviceLocation = deviceLocation;
+    }
+
+    /**
+     * Device location deleter
+     */
+    public void removeDeviceLocation() {
+        deviceLocation = null;
     }
 
     /**

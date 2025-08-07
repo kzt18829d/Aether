@@ -5,22 +5,17 @@ import com.aether.business.devices.deviceInterfaces.Recording;
 import com.aether.business.enums.DeviceStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import java.util.UUID;
+
+@JsonTypeName("SecurityCamera")
 public class SecurityCamera extends Device implements Recording, NightVision {
     private boolean isRecording;
     private boolean nightVision;
-
-    /**
-     * Конструктор для преобразования из JSON/db
-     *
-     * @param deviceUUID
-     * @param deviceName
-     * @param deviceLocation
-     * @param deviceStatus
-     */
-    protected SecurityCamera(String deviceUUID, String deviceName, String deviceLocation, String deviceStatus) {
-        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
-    }
 
     /**
      * Основной конструктор
@@ -28,32 +23,70 @@ public class SecurityCamera extends Device implements Recording, NightVision {
      * @param deviceName
      * @param deviceLocation
      */
-    protected SecurityCamera(Name deviceName, Location deviceLocation) {
+    public SecurityCamera(Name deviceName, Location deviceLocation) {
         super(deviceName, deviceLocation);
         this.isRecording = false;
         this.nightVision = false;
     }
 
     /**
+     * Конструктор десериализации
+     *
+     * @param deviceUUID
+     * @param deviceName
+     * @param deviceLocation
+     * @param deviceStatus
+     */
+    @JsonCreator
+    public SecurityCamera(
+            @JsonProperty("deviceUUID") UUID deviceUUID,
+            @JsonProperty("deviceName") Name deviceName,
+            @JsonProperty("deviceLocation") Location deviceLocation,
+            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
+            @JsonProperty("deviceNightVisionStatus") boolean deviceNightVisionStatus,
+            @JsonProperty("deviceRecordingStatus") boolean deviceRecordingStatus) {
+        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
+        this.isRecording = deviceRecordingStatus;
+        this.nightVision = deviceNightVisionStatus;
+    }
+
+    @JsonGetter("deviceNightVisionStatus")
+    public boolean getNightVision() {
+        return nightVision;
+    }
+
+    @JsonGetter("deviceRecordingStatus")
+    public boolean getRecording() {
+        return isRecording;
+    }
+
+    /**
      * Enable night vision
+     *
      * @return boolean
      */
     @Override
     public boolean enableNightVision() {
-        return false;
+        if (!(super.deviceStatus == DeviceStatus.ONLINE)) return false;
+        nightVision = true;
+        return true;
     }
 
     /**
      * Disable night vision
+     *
      * @return boolean
      */
     @Override
     public boolean disableNightVision() {
-        return false;
+        if (!(super.deviceStatus == DeviceStatus.ONLINE)) return false;
+        nightVision = false;
+        return true;
     }
 
     /**
      * Start recording
+     *
      * @return boolean
      */
     @Override
@@ -65,6 +98,7 @@ public class SecurityCamera extends Device implements Recording, NightVision {
 
     /**
      * Stop recording
+     *
      * @return boolean
      */
     @Override

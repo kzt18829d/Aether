@@ -1,11 +1,13 @@
 package com.aether.business.types;
 import com.aether.business.Exceptions.InvalidBrightnessException;
 import com.aether.business.Exceptions.valid.BrightnessException;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Objects;
 
 /**
- * Класс уровня яркости освещения
+ * Wrapper-класс уровня освещения
  */
 public class Brightness {
     private Integer brightness;
@@ -14,28 +16,43 @@ public class Brightness {
     public static final int MIDDLE = 50;
 
 
+    /**
+     * <p>Основной конструктор</p>
+     * <p>Minimal value: 0</p>
+     * <p>Maximal value: 1000</p>
+     * @param brightness
+     */
+    @JsonCreator
     public Brightness(Integer brightness) {
         this.brightness = validBrightness(brightness);
     }
 
+    /**
+     * Проверка валидности уровня освещения
+     * @param current
+     * @return
+     */
     private Integer validBrightness(Integer current) {
         if (current < MIN || current > MAX) throw new BrightnessException("Assigned brightness is invalid: " + current + ".");
         return current;
     }
 
+    /**
+     * Brightness setter
+     * @param brightness
+     */
     public void setBrightness(Integer brightness) {
         this.brightness = validBrightness(brightness);
     }
 
+    /**
+     * Brightness getter
+     * @return Integer
+     */
+    @JsonValue
     public Integer getBrightness() {
         return brightness;
     }
-
-    public Integer getMAX() {
-        return MAX;
-    }
-
-    public Integer getMIN() { return MIN; }
 
     @Override
     public boolean equals(Object o) {

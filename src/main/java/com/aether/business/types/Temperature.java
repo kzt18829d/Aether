@@ -2,6 +2,8 @@ package com.aether.business.types;
 
 import com.aether.business.Exceptions.InvalidTemperatureException;
 import com.aether.business.Exceptions.valid.TemperatureException;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Objects;
 
@@ -18,6 +20,7 @@ public class Temperature {
      * Конструктор
      * @param temperature
      */
+    @JsonCreator
     public Temperature(Integer temperature) {
         this.temperature = validTemperature(temperature);
     }
@@ -32,6 +35,7 @@ public class Temperature {
         return temperature;
     }
 
+    @JsonValue
     public Integer getTemperature() {
         return temperature;
     }

@@ -3,6 +3,8 @@ package com.aether.business.types;
 import java.util.Objects;
 import com.aether.business.Exceptions.InvalidLocationNameException;
 import com.aether.business.Exceptions.LocationException;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Класс местоположения
@@ -14,6 +16,7 @@ public class Location {
      * Конструктор
      * @param location
      */
+    @JsonCreator
     public Location(String location) {
         if (location.isEmpty()) throw new LocationException("Location has invalid name: \"" + location + "\".");
         this.location = location;
@@ -23,6 +26,7 @@ public class Location {
      * Вернуть Location в формате String
      * @return String
      */
+    @JsonValue
     public String getString() {
         return location;
     }

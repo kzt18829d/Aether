@@ -26,9 +26,9 @@ public class DeviceManager extends IManager {
         }
     }
 
-    public static void deviceHelp(CommandAddDeviceHelp commandAddDeviceHelp) {
-        Terminal.info(commandAddDeviceHelp.help_s());
-    }
+//    public static void deviceHelp(CommandAddDeviceHelp commandAddDeviceHelp) {
+//        Terminal.info(commandAddDeviceHelp.help_s());
+//    }
 
     public static void removeDevice(SmartHomeController smartHomeController, String uuid_s, CommandRemoveDevice commandRemoveDevice) {
         try {

@@ -1,5 +1,7 @@
 package com.aether.business.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * ENUM статус блокировки
  */
@@ -25,10 +27,8 @@ public enum LockStatus {
      * @return LockStatus
      */
     public static LockStatus fromBoolean(boolean bool) {
-        return switch (bool) {
-            case true -> LOCKED;
-            case false -> UNLOCKED;
-        };
+        if (bool) return LOCKED;
+        else return UNLOCKED;
     }
 
     public static boolean getBoolean(LockStatus lockStatus) {
@@ -36,5 +36,11 @@ public enum LockStatus {
             case LOCKED -> true;
             case UNLOCKED -> false;
         };
+    }
+
+    @JsonCreator
+    public static LockStatus fromString(String status) {
+        if ("LOCKED".equals(status)) return LOCKED;
+        else return UNLOCKED;
     }
 }

@@ -2,27 +2,28 @@ package com.aether.business.types;
 
 import com.aether.business.Exceptions.InvalidDeviceNameException;
 import com.aether.business.Exceptions.valid.NameException;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Objects;
 
 /**
- * @ru Имя объекта
- * @en Object name
+ * Wrapper-класс имён
  */
 public class Name {
     private final String name;
 
     /**
-     * @ru Конструктор
-     * @en Constructor
+     * Конструктор
      * @param name
      */
+    @JsonCreator
     public Name(String name) {
         this.name = validName(name);
     }
 
     /**
-     * @ru Проверка валидности имени объекта
+     * @ru Проверка валидности имени
      * @en Object name validator
      * @param name
      * @return String
@@ -39,6 +40,7 @@ public class Name {
      * @en Return Name in String format
      * @return String
      */
+    @JsonValue
     public String getString() {
         return name;
     }

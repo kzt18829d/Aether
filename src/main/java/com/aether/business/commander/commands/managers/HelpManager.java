@@ -102,7 +102,7 @@ public class HelpManager extends IManager {
             helpText.append("  device will create location automatically.\n");
         } else {
             controller.getAllLocations().forEach(location ->
-                    helpText.append("  ").append(location.get()).append("\n"));
+                    helpText.append("  ").append(location.getString()).append("\n"));
         }
 
         helpText.append("\nEXAMPLES:\n");
@@ -127,9 +127,9 @@ public class HelpManager extends IManager {
             helpText.append("EXISTING DEVICES:\n");
             controller.getAllDevices().forEach(device ->
                     helpText.append(String.format("  %s - %s (%s)\n",
-                            device.getUuid(),
-                            device.getDeviceNameString(),
-                            device.getType())));
+                            device.getDeviceUUID(),
+                            device.getDeviceName_string(),
+                            device.getClass().toString())));
         } else {
             helpText.append("No devices available. Create devices first using 'add device' command.\n");
         }
@@ -151,15 +151,15 @@ public class HelpManager extends IManager {
             helpText.append("EXISTING DEVICES:\n");
             controller.getAllDevices().forEach(device ->
                     helpText.append(String.format("  %s - %s\n",
-                            device.getUuid(),
-                            device.getDeviceNameString())));
+                            device.getDeviceUUID(),
+                            device.getDeviceName_string())));
             helpText.append("\n");
         }
 
         if (!controller.getAllLocations().isEmpty()) {
             helpText.append("EXISTING LOCATIONS:\n");
             controller.getAllLocations().forEach(location ->
-                    helpText.append("  ").append(location.get()).append("\n"));
+                    helpText.append("  ").append(location.getString()).append("\n"));
         }
 
         Terminal.info(helpText.toString());

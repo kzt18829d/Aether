@@ -5,21 +5,17 @@ import com.aether.business.enums.DeviceStatus;
 import com.aether.business.enums.LockStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import java.util.UUID;
+
+@JsonTypeName("SmartLock")
 public class SmartLock extends Device implements Lockable {
     private LockStatus deviceLockStatus;
-    /**
-     * Конструктор для преобразования из JSON/db
-     *
-     * @param deviceUUID
-     * @param deviceName
-     * @param deviceLocation
-     * @param deviceStatus
-     */
-    protected SmartLock(String deviceUUID, String deviceName, String deviceLocation, String deviceStatus) {
-        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
-        this.deviceLockStatus = LockStatus.UNLOCKED;
-    }
+
 
     /**
      * Основной конструктор
@@ -27,9 +23,28 @@ public class SmartLock extends Device implements Lockable {
      * @param deviceName
      * @param deviceLocation
      */
-    protected SmartLock(Name deviceName, Location deviceLocation) {
+    public SmartLock(Name deviceName, Location deviceLocation) {
         super(deviceName, deviceLocation);
         this.deviceLockStatus = LockStatus.UNLOCKED;
+    }
+
+    /**
+     * Конструктор десериализации
+     * @param deviceUUID
+     * @param deviceName
+     * @param deviceLocation
+     * @param deviceStatus
+     * @param deviceLockStatus
+     */
+    @JsonCreator
+    public SmartLock(
+            @JsonProperty("deviceUUID") UUID deviceUUID,
+            @JsonProperty("deviceName") Name deviceName,
+            @JsonProperty("deviceLocation") Location deviceLocation,
+            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
+            @JsonProperty("deviceLockStatus") LockStatus deviceLockStatus) {
+        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
+        this.deviceLockStatus = deviceLockStatus;
     }
 
     /**
@@ -73,6 +88,7 @@ public class SmartLock extends Device implements Lockable {
      *
      * @return String
      */
+    @JsonGetter("deviceLockStatus")
     @Override
     public String getLockStatusString() {
         return LockStatus.getString(this.deviceLockStatus);

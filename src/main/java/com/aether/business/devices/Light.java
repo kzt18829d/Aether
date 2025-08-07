@@ -1,11 +1,14 @@
 package com.aether.business.devices;
 
+import com.aether.business.enums.DeviceStatus;
 import com.aether.business.types.Brightness;
 import com.aether.business.types.ColorTemperature;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Класс элементов освещения
@@ -14,26 +17,11 @@ import java.util.Objects;
  * @see Brightness
  * @see ColorTemperature
  */
+@JsonTypeName("Light")
 public class Light extends Device {
     private final Brightness deviceBrightness;
     private final ColorTemperature deviceColorTemperature;
 
-
-    /**
-     * Конструктор для преобразования из JSON/db
-     *
-     * @param deviceUUID
-     * @param deviceName
-     * @param deviceLocation
-     * @param deviceStatus
-     * @param deviceBrightness
-     * @param deviceColorTemperature
-     */
-    protected Light(String deviceUUID, String deviceName, String deviceLocation, String deviceStatus, int deviceBrightness, int deviceColorTemperature) {
-        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
-        this.deviceBrightness = new Brightness(deviceBrightness);
-        this.deviceColorTemperature = new ColorTemperature(deviceColorTemperature);
-    }
 
     /**
      * Основной конструктор
@@ -43,8 +31,30 @@ public class Light extends Device {
      * @param deviceBrightness
      * @param deviceColorTemperature
      */
-    protected Light(Name deviceName, Location deviceLocation, Brightness deviceBrightness, ColorTemperature deviceColorTemperature) {
+    public Light(Name deviceName, Location deviceLocation, Brightness deviceBrightness, ColorTemperature deviceColorTemperature) {
         super(deviceName, deviceLocation);
+        this.deviceBrightness = deviceBrightness;
+        this.deviceColorTemperature = deviceColorTemperature;
+    }
+
+    /**
+     * Конструктор десериализации
+     * @param deviceUUID
+     * @param deviceName
+     * @param deviceLocation
+     * @param deviceStatus
+     * @param deviceBrightness
+     * @param deviceColorTemperature
+     */
+    @JsonCreator
+    public Light(
+            @JsonProperty("deviceUUID") UUID deviceUUID,
+            @JsonProperty("deviceName") Name deviceName,
+            @JsonProperty("deviceLocation") Location deviceLocation,
+            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
+            @JsonProperty("deviceBrightness") Brightness deviceBrightness,
+            @JsonProperty("deviceColorTemperature") ColorTemperature deviceColorTemperature) {
+        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
         this.deviceBrightness = deviceBrightness;
         this.deviceColorTemperature = deviceColorTemperature;
     }
@@ -57,7 +67,7 @@ public class Light extends Device {
      * @param deviceBrightness
      * @param deviceColorTemperature
      */
-    protected Light(Name deviceName, Location deviceLocation, int deviceBrightness, int deviceColorTemperature) {
+    public Light(Name deviceName, Location deviceLocation, int deviceBrightness, int deviceColorTemperature) {
         super(deviceName, deviceLocation);
         this.deviceBrightness = new Brightness(deviceBrightness);
         this.deviceColorTemperature = new ColorTemperature(deviceColorTemperature);
@@ -67,6 +77,8 @@ public class Light extends Device {
      * Device brightness getter
      * @return Brightness
      */
+
+    @JsonGetter("deviceBrightness")
     public Brightness getDeviceBrightness() {
         return deviceBrightness;
     }
@@ -75,6 +87,8 @@ public class Light extends Device {
      * Device Color temperature getter
      * @return ColorTemperature
      */
+
+    @JsonGetter("deviceColorTemperature")
     public ColorTemperature getDeviceColorTemperature() {
         return deviceColorTemperature;
     }

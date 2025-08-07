@@ -1,4 +1,4 @@
-package com.aether.business.commander;
+package com.aether.business.core;
 
 import com.aether.business.Exceptions.*;
 import com.aether.business.commander.commands.*;
@@ -15,7 +15,6 @@ import com.aether.business.commander.commands.managers.DeviceManager;
 import com.aether.business.commander.commands.managers.LocationManager;
 import com.aether.business.commander.commands.managers.StatusManager;
 import com.aether.business.constaints.Terminal;
-import com.aether.business.core.SmartHomeController;
 import com.beust.jcommander.JCommander;
 
 import java.text.ParseException;

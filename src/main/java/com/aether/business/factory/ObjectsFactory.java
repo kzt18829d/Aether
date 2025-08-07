@@ -35,7 +35,7 @@ public class ObjectsFactory {
     }
 
     private static Thermostat createThermostat(Name name, Location location) {
-        return new Thermostat(name, location, Temperature.BASED);
+        return new Thermostat(name, location, new Temperature(Temperature.BASED));
     }
 
 

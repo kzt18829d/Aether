@@ -1,27 +1,21 @@
 package com.aether.business.devices;
 
+import com.aether.business.enums.DeviceStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
 import com.aether.business.types.Temperature;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.util.Objects;
+import java.util.UUID;
 
+@JsonTypeName("Thermostat")
 public class Thermostat extends Device {
     private final Temperature deviceTemperature;
 
-
-    /**
-     * Конструктор для преобразования из JSON/db
-     *
-     * @param deviceUUID
-     * @param deviceName
-     * @param deviceLocation
-     * @param deviceStatus
-     */
-    protected Thermostat(String deviceUUID, String deviceName, String deviceLocation, String deviceStatus, Integer deviceTemperature) {
-        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
-        this.deviceTemperature = new Temperature(deviceTemperature);
-    }
 
     /**
      * Основной конструктор
@@ -29,7 +23,7 @@ public class Thermostat extends Device {
      * @param deviceName
      * @param deviceLocation
      */
-    protected Thermostat(Name deviceName, Location deviceLocation, Temperature deviceTemperature) {
+    public Thermostat(Name deviceName, Location deviceLocation, Temperature deviceTemperature) {
         super(deviceName, deviceLocation);
         this.deviceTemperature = deviceTemperature;
     }
@@ -40,9 +34,28 @@ public class Thermostat extends Device {
      * @param deviceName
      * @param deviceLocation
      */
-    protected Thermostat(Name deviceName, Location deviceLocation) {
+    public Thermostat(Name deviceName, Location deviceLocation) {
         super(deviceName, deviceLocation);
         this.deviceTemperature = new Temperature(Temperature.BASED);
+    }
+
+    /**
+     * Конструктор десериализации
+     * @param deviceUUID
+     * @param deviceName
+     * @param deviceLocation
+     * @param deviceStatus
+     * @param deviceTemperature
+     */
+    @JsonCreator
+    public Thermostat(
+            @JsonProperty("deviceUUID") UUID deviceUUID,
+            @JsonProperty("deviceName") Name deviceName,
+            @JsonProperty("deviceLocation") Location deviceLocation,
+            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
+            @JsonProperty("deviceTemperature") Temperature deviceTemperature) {
+        super(deviceUUID, deviceName, deviceLocation, deviceStatus);
+        this.deviceTemperature = deviceTemperature;
     }
 
     /**
@@ -57,6 +70,7 @@ public class Thermostat extends Device {
      * Device temperature getter
      * @return Temperature
      */
+    @JsonGetter("deviceTemperature")
     public Temperature getTemperature() {
         return deviceTemperature;
     }
