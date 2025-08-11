@@ -18,6 +18,7 @@ import java.util.UUID;
  * @see ColorTemperature
  */
 @JsonTypeName("Light")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Light extends Device {
     private final Brightness deviceBrightness;
     private final ColorTemperature deviceColorTemperature;
@@ -48,11 +49,11 @@ public class Light extends Device {
      */
     @JsonCreator
     public Light(
-            @JsonProperty("deviceUUID") UUID deviceUUID,
-            @JsonProperty("deviceName") Name deviceName,
-            @JsonProperty("deviceLocation") Location deviceLocation,
-            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
-            @JsonProperty("deviceBrightness") Brightness deviceBrightness,
+            @JsonProperty("deviceUUID")             UUID deviceUUID,
+            @JsonProperty("deviceName")             Name deviceName,
+            @JsonProperty("deviceLocation")         Location deviceLocation,
+            @JsonProperty("powerStatus")            DeviceStatus deviceStatus,
+            @JsonProperty("deviceBrightness")       Brightness deviceBrightness,
             @JsonProperty("deviceColorTemperature") ColorTemperature deviceColorTemperature) {
         super(deviceUUID, deviceName, deviceLocation, deviceStatus);
         this.deviceBrightness = deviceBrightness;
@@ -107,6 +108,11 @@ public class Light extends Device {
      */
     public void setDeviceColorTemperature(Integer newColorTemperature) {
         this.deviceColorTemperature.setTemperature(newColorTemperature);
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "Light";
     }
 
     @Override

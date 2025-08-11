@@ -5,14 +5,12 @@ import com.aether.business.enums.DeviceStatus;
 import com.aether.business.enums.LockStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.UUID;
 
 @JsonTypeName("SmartLock")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SmartLock extends Device implements Lockable {
     private LockStatus deviceLockStatus;
 
@@ -38,13 +36,18 @@ public class SmartLock extends Device implements Lockable {
      */
     @JsonCreator
     public SmartLock(
-            @JsonProperty("deviceUUID") UUID deviceUUID,
-            @JsonProperty("deviceName") Name deviceName,
-            @JsonProperty("deviceLocation") Location deviceLocation,
-            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
-            @JsonProperty("deviceLockStatus") LockStatus deviceLockStatus) {
+            @JsonProperty("deviceUUID")         UUID deviceUUID,
+            @JsonProperty("deviceName")         Name deviceName,
+            @JsonProperty("deviceLocation")     Location deviceLocation,
+            @JsonProperty("powerStatus")       DeviceStatus deviceStatus,
+            @JsonProperty("deviceLockStatus")   LockStatus deviceLockStatus) {
         super(deviceUUID, deviceName, deviceLocation, deviceStatus);
         this.deviceLockStatus = deviceLockStatus;
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "SmartLock";
     }
 
     /**
@@ -78,6 +81,7 @@ public class SmartLock extends Device implements Lockable {
      *
      * @return boolean
      */
+    @JsonIgnore
     @Override
     public boolean getLockStatusBoolean() {
         return LockStatus.getBoolean(this.deviceLockStatus);

@@ -4,15 +4,13 @@ import com.aether.business.enums.DeviceStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
 import com.aether.business.types.Temperature;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @JsonTypeName("Thermostat")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Thermostat extends Device {
     private final Temperature deviceTemperature;
 
@@ -49,11 +47,11 @@ public class Thermostat extends Device {
      */
     @JsonCreator
     public Thermostat(
-            @JsonProperty("deviceUUID") UUID deviceUUID,
-            @JsonProperty("deviceName") Name deviceName,
-            @JsonProperty("deviceLocation") Location deviceLocation,
-            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
-            @JsonProperty("deviceTemperature") Temperature deviceTemperature) {
+            @JsonProperty("deviceUUID")         UUID deviceUUID,
+            @JsonProperty("deviceName")         Name deviceName,
+            @JsonProperty("deviceLocation")     Location deviceLocation,
+            @JsonProperty("powerStatus")       DeviceStatus deviceStatus,
+            @JsonProperty("deviceTemperature")  Temperature deviceTemperature) {
         super(deviceUUID, deviceName, deviceLocation, deviceStatus);
         this.deviceTemperature = deviceTemperature;
     }
@@ -81,6 +79,11 @@ public class Thermostat extends Device {
      */
     public void setTemperature(Integer temperature) {
         this.deviceTemperature.setTemperature(temperature);
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "Thermostat";
     }
 
     @Override

@@ -5,14 +5,12 @@ import com.aether.business.devices.deviceInterfaces.Recording;
 import com.aether.business.enums.DeviceStatus;
 import com.aether.business.types.Location;
 import com.aether.business.types.Name;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.UUID;
 
 @JsonTypeName("SecurityCamera")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SecurityCamera extends Device implements Recording, NightVision {
     private boolean isRecording;
     private boolean nightVision;
@@ -39,12 +37,12 @@ public class SecurityCamera extends Device implements Recording, NightVision {
      */
     @JsonCreator
     public SecurityCamera(
-            @JsonProperty("deviceUUID") UUID deviceUUID,
-            @JsonProperty("deviceName") Name deviceName,
-            @JsonProperty("deviceLocation") Location deviceLocation,
-            @JsonProperty("deviceStatus") DeviceStatus deviceStatus,
-            @JsonProperty("deviceNightVisionStatus") boolean deviceNightVisionStatus,
-            @JsonProperty("deviceRecordingStatus") boolean deviceRecordingStatus) {
+            @JsonProperty("deviceUUID")                 UUID deviceUUID,
+            @JsonProperty("deviceName")                 Name deviceName,
+            @JsonProperty("deviceLocation")             Location deviceLocation,
+            @JsonProperty("powerStatus")               DeviceStatus deviceStatus,
+            @JsonProperty("deviceNightVisionStatus")    boolean deviceNightVisionStatus,
+            @JsonProperty("deviceRecordingStatus")      boolean deviceRecordingStatus) {
         super(deviceUUID, deviceName, deviceLocation, deviceStatus);
         this.isRecording = deviceRecordingStatus;
         this.nightVision = deviceNightVisionStatus;
@@ -58,6 +56,11 @@ public class SecurityCamera extends Device implements Recording, NightVision {
     @JsonGetter("deviceRecordingStatus")
     public boolean getRecording() {
         return isRecording;
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "SecurityCamera";
     }
 
     /**

@@ -28,10 +28,6 @@ public class JacksonTEst {
         return new Light(new Name("TemplateDeviceName"), new Location("TemplateLocation"), new Brightness(50), new ColorTemperature(3000));
     }
 
-    private void save() {
-
-    }
-
     private void createDeviceInfo(Device device) {
         if (device == null) {
             throw new RuntimeException("Device is null");
@@ -61,6 +57,7 @@ public class JacksonTEst {
 
     public void test1() {
         DeviceTest2();
+        DeviceTest3();
     }
 
 
@@ -141,6 +138,33 @@ public class JacksonTEst {
 
         try {
             Map<UUID, Device> deviceMap2 = deviceDataManager.binaryRead();
+            for (Map.Entry<UUID, Device> deviceSet: deviceMap2.entrySet()) {
+                Device device = deviceSet.getValue();
+                Terminal.base(device.getDeviceName() + " \n" + device.getDeviceUUID() + "\n" + device.getDeviceLocation() + "\n" + device.getClass().toString());
+            }
+        } catch (Exception e) {
+            Debug.error(e.getMessage());
+        }
+    }
+
+    private void DeviceTest3() {
+        DeviceDataManager deviceDataManager = new DeviceDataManager();
+
+        Map<UUID, Device> deviceMap = new HashMap<>();
+        Device device1 = new Light(new Name("Light1"), new Location("Loc1"), 10, 2701);
+        Device device2 = new SmartLock(new Name("Lock1"), new Location("Loc1"));
+
+        deviceMap.putIfAbsent(device1.getDeviceUUID(), device1);
+        deviceMap.putIfAbsent(device2.getDeviceUUID(), device2);
+
+        try {
+            deviceDataManager.jsonSave(deviceMap);
+        } catch (Exception e) {
+        Debug.error(e.getMessage());
+        }
+
+        try {
+            Map<UUID, Device> deviceMap2 = deviceDataManager.jsonRead();
             for (Map.Entry<UUID, Device> deviceSet: deviceMap2.entrySet()) {
                 Device device = deviceSet.getValue();
                 Terminal.base(device.getDeviceName() + " \n" + device.getDeviceUUID() + "\n" + device.getDeviceLocation() + "\n" + device.getClass().toString());

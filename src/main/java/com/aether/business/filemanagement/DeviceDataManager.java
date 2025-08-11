@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +33,7 @@ public class DeviceDataManager {
     public DeviceDataManager() {
         deviceObjectMapper = new ObjectMapper();
         deviceObjectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
     }
 
     /**

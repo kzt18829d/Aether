@@ -53,6 +53,8 @@ public class ColorTemperature {
         return temperature;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

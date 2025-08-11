@@ -8,7 +8,6 @@ import com.aether.business.types.Location;
 import com.aether.business.types.Name;
 import com.fasterxml.jackson.annotation.*;
 
-import javax.xml.namespace.QName;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,7 +22,8 @@ import java.util.UUID;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "deviceType"
+        property = "deviceType",
+        visible = true
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Light.class, name = "Light"),
@@ -32,6 +32,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(value = Thermostat.class, name = "Thermostat")
 }
 )
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
     /**
      * UUID устройства
@@ -69,12 +70,14 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
             @JsonProperty("deviceUUID")     UUID deviceUUID,
             @JsonProperty("deviceName")     Name deviceName,
             @JsonProperty("deviceLocation") Location deviceLocation,
-            @JsonProperty("deviceStatus")   DeviceStatus deviceStatus) {
+            @JsonProperty("powerStatus")   DeviceStatus deviceStatus) {
         this.deviceUUID = deviceUUID;
         this.deviceName = deviceName;
         this.deviceLocation = deviceLocation;
         this.deviceStatus = deviceStatus;
     }
+
+    //------------------------------ Class/Wrapper-class getters ------------------------------------------------------------------------------------------------------
 
     /**
      * Device name getter
@@ -96,6 +99,16 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
     public final UUID getDeviceUUID() { return deviceUUID; }
 
     /**
+     * Статус питания
+     * @return DeviceStatus
+     */
+    public DeviceStatus getPowerStatus() {
+        return this.deviceStatus;
+    }
+
+    //------------------------------ To String getters ------------------------------------------------------------------------------------------------------
+
+    /**
      * Device location getter (to String)
      * @return String
      */
@@ -104,13 +117,31 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
 
     /**
      * Device name getter (to String)
+     * <p>!JsonGetter</p>
      * @return String
      */
     @JsonGetter("deviceName")
     public final String getDeviceName_string() { return deviceName.getString(); }
 
+    /**
+     * Device UUID getter (to String)
+     * <p>!JsonGetter</p>
+     * @return String
+     */
     @JsonGetter("deviceUUID")
     public final String getDeviceUUID_string() { return deviceUUID.toString(); }
+
+    /**
+     * Device type getter
+     * <p>!JsonGetter</p>
+     * @return String
+     */
+    @JsonGetter("deviceType")
+    public String getDeviceType() {
+        return "Device";
+    }
+
+    //------------------------------ Logic methods ------------------------------------------------------------------------------------------------------
 
     /**
      * Device location setter
@@ -158,14 +189,6 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
     }
 
     /**
-     * Статус питания
-     * @return DeviceStatus
-     */
-    public DeviceStatus getPowerStatus() {
-        return this.deviceStatus;
-    }
-
-    /**
      * Релокация устройства
      * @param location
      */
@@ -177,6 +200,9 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
             throw new DeviceException("Device " + deviceUUID + " wasn't relocated");
         }
     }
+
+    //------------------------------ Hash&Equals methods (Java core) ------------------------------------------------------------------------------------------------------
+
 
     /**
      * Вспомогательный инструмент для генерации хэш-функций
