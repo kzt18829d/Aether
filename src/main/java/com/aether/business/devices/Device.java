@@ -34,16 +34,11 @@ import java.util.UUID;
 )
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
-    /**
-     * UUID устройства
-     * Название устройства
-     * Местоположение устройства
-     * Статус устройства
-     */
+
     private final UUID deviceUUID;
     private final Name deviceName;
     private Location deviceLocation;
-    DeviceStatus deviceStatus;
+    protected DeviceStatus deviceStatus;
 
 
     /**
@@ -156,6 +151,7 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
      * Device location deleter
      */
     public void removeDeviceLocation() {
+        turnOff();
         deviceLocation = null;
     }
 
