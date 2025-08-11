@@ -15,15 +15,16 @@ import com.aether.business.commander.commands.managers.DeviceManager;
 import com.aether.business.commander.commands.managers.LocationManager;
 import com.aether.business.commander.commands.managers.StatusManager;
 import com.aether.business.constaints.Terminal;
+import com.aether.business.devices.Device;
+import com.aether.business.filemanagement.DeviceDataManager;
 import com.beust.jcommander.JCommander;
 
 import java.text.ParseException;
 import java.util.Scanner;
 
 public class CommandsManager {
-    private final String cmdl;
-    private final String cmdlERR;
-    private final String cmdlINFO;
+    private final DeviceDataManager deviceDataManager;
+    private final SmartHomeController smartHomeController;
     private final Scanner scanner;
 
     private final CommandExit commandExit;
@@ -43,10 +44,10 @@ public class CommandsManager {
     private final CommandRemoveLocation commandRemoveLocation;
     // others commands
 
-    public CommandsManager(Object main_) {
-        cmdl = "<Aether> ";
-        cmdlERR = "<Aether> [ERROR] ";
-        cmdlINFO = "<Aether> [INFO] ";
+    public CommandsManager(DeviceDataManager deviceDataManager, SmartHomeController smartHomeController) {
+        this.deviceDataManager = deviceDataManager;
+        this.smartHomeController = smartHomeController;
+
         scanner = new Scanner(System.in);
 
         commandExit = new CommandExit();
@@ -66,7 +67,7 @@ public class CommandsManager {
         commandRemoveLocation = new CommandRemoveLocation();
     }
 
-    public void Commander(SmartHomeController smartHomeController, Object main_object) {
+    public void Commander(Object main_object) {
         boolean cycleController = true;
         while (cycleController) {
             // <Aether>
@@ -179,11 +180,13 @@ public class CommandsManager {
     }
 
     private void funcSave() {
-        Terminal.info("Save Data to \"XXXX\"");
+        Terminal.base("Saving device data. . .");
+        deviceDataManager.jsonSave(smartHomeController.getDeviceMap());
     }
 
     private void funcLoad() {
         Terminal.info("\"Loading Data from \"XXXX\"...");
+        smartHomeController.loadDevices(deviceDataManager.jsonRead());
     }
 
 }

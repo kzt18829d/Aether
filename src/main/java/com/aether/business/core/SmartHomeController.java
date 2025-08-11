@@ -50,6 +50,35 @@ public class SmartHomeController {
     public List<Device> getAllDevices() { return new ArrayList<Device>(deviceMap.values()); }
 
     /**
+     * Device map getter.
+     * <p>Using for upload device data</p>
+     * @return Map
+     */
+    public Map<UUID, Device> getDeviceMap() { return deviceMap; }
+
+    /**
+     * Load devices from map
+     * @param deviceMap
+     * @return boolean
+     */
+    public boolean loadDevices(Map<UUID, Device> deviceMap) {
+        try {
+            for (Map.Entry<UUID, Device> deviceEntry : deviceMap.entrySet()) {
+                Device tempDevice = deviceEntry.getValue();
+                try {
+                    this.addDevice(tempDevice);
+                } catch (Exception exception) {
+                    Terminal.warn("Device wasn't be added and skipped: " + tempDevice.getDeviceUUID());
+                }
+            }
+        } catch (Exception exception) {
+            Terminal.warn(exception.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Запросить локацию по имени
      * @param location_name
      * @return Искомая Location

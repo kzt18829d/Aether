@@ -60,7 +60,7 @@ public abstract class Device implements TurnPower<DeviceStatus>, Relocation {
 
     /**
      * Конструктор десериализации
-     * @param deviceUUID
+     * @param deviceUUID UUID устройства
      * @param deviceName
      * @param deviceLocation
      * @param deviceStatus
