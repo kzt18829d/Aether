@@ -75,4 +75,8 @@ public class SmartLock extends AbstractDevice implements Lockable {
         return LockStatus.getBoolean(deviceLockStatus.get());
     }
 
+    public LockStatus getLockStatus() {
+        return deviceLockStatus.get();
+    }
+
 }
