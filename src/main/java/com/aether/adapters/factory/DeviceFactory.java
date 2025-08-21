@@ -28,7 +28,7 @@ public class DeviceFactory {
         logger.info("Device factory initialized");
     }
 
-    public DeviceFactory getInstance() {
+    public static DeviceFactory getInstance() {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) instance = new DeviceFactory();

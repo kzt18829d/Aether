@@ -35,7 +35,7 @@ public class DeviceDTORegistry {
         logger.info("DTO registry initialized with default converters");
     }
 
-    public DeviceDTORegistry getInstance() {
+    public static DeviceDTORegistry getInstance() {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) instance = new DeviceDTORegistry();

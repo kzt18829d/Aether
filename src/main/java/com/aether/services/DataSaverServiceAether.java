@@ -34,11 +34,11 @@ public class DataSaverServiceAether implements DataSaverService {
         return new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    public void loadDefaultFileDirectory(String filePath) {
+    public static void loadDefaultFileDirectory(String filePath) {
         DEFAULT_FILE_DIRECTORY = filePath;
     }
 
-    public void setFileFormat(String fileFormat) {
+    public static void setFileFormat(String fileFormat) {
         Objects.requireNonNull(fileFormat, "File format cannot be null");
         if (fileFormat.isEmpty()) throw new DataSaverServiceException("File format cannot be empty");
         if (!fileFormat.startsWith(".") || fileFormat.endsWith(".") || fileFormat.endsWith(".json"))
